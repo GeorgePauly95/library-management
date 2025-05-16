@@ -1,5 +1,5 @@
 """
-ASGI config for lib_mgmt_app project.
+ASGI config for library_management_project project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.asgi import get_asgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'lib_mgmt_app.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'library_management_project.settings')
 
 application = get_asgi_application()

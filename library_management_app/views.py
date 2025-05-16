@@ -5,4 +5,4 @@ from django.http import HttpResponse
 
 
 def index(request):
-    return HttpResponse("Library Management App!")
+    return HttpResponse("This is a Library Management App!")

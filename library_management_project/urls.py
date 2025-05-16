@@ -1,5 +1,5 @@
 """
-URL configuration for lib_mgmt_app project.
+URL configuration for library_management_project project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/5.2/topics/http/urls/
@@ -16,12 +16,10 @@ Including another URLconf
 """
 
 from django.contrib import admin
-from django.urls import path
-from catalog import views
+from django.urls import include, path
+
 
 urlpatterns = [
-    path("", views.index, name="index"),
+    path("library_management_appsos/", include("library_management_app.urls")),
+    path("admin/", admin.site.urls),
 ]
-# urlpatterns = [
-#     path('admin/', admin.site.urls),
-# ]
