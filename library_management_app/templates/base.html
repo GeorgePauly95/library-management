@@ -10,16 +10,60 @@
             color: white;
             font-family: 'Courier New', Courier, monospace
         }
-        /* h1 {
+        h1 {
             color: white;
-            font-family: 'Courier New', Courier, monospace
-        } */
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 20px
+        }
+        ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            width: 150px;
+            background-color: #f1f1f1;
+            border: 1px solid #555;
+            }
+        li a {
+              display: block;
+              padding: 8px 16px;
+              text-decoration: none;
+              text-align: center;
+              border-bottom: 1px solid #555;
+             }
+        li a:hover {
+                    background-color: #555;
+                    color: white;
+                    }
+        .dropdown {
+                    position: relative;
+                    display: inline-block;
+        }
+        .dropdown-content {
+                display: none;
+                position: absolute;
+                background-color: #f9f9f9;
+                width: 150px;
+                box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+                /* z-index: 1; */
+        }
+        .dropdown:hover .dropdown-content {
+                display: block;
+        }
     </style>
 
 </head>
 <body>
-    {% block heading %}<h1>This is the Library Management App!</h1>{% endblock %}
-    <!-- <label for="book-search">Author</label>
-    <input type="text" id="book-search"> -->
+    {% block heading %}<h1>George's Library</h1>{% endblock %}
+
+    <div class="dropdown">
+        <span><b>Browse by Language</b></span>
+        <div class="dropdown-content">
+            <ul>{% for language in languages %}
+                <li><a href="/library_management/api/books/language/{{language}}">{{language}}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
 </body>
 </html>
