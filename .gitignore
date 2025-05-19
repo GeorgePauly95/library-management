@@ -1,2 +1,4 @@
 .venv/
 library_management_project/__pycache__/
+library_management_app/__pycache__/
+library_management_app/migrations/__pycache__/
