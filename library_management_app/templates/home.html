@@ -56,6 +56,7 @@
             padding-top: 0px;
             margin-left: 200px;
             display: inline;
+            font-size: 12px;
         }
     </style>
 
@@ -67,7 +68,7 @@
         <span><b>Browse by Language</b></span>
         <div class="dropdown-content">
             <ul>{% for language in languages %}
-                <li><a href="{% url 'getByLanguage' language %}">{{language}}</a></li>    
+                <li><a href="{% url 'get_by_language' language %}">{{language}}</a></li>    
                 {% endfor %}   
             </ul>
         </div>
@@ -75,6 +76,8 @@
     <div>
         <h2><a href="api/books">+ Add a Book</a></h2>
     </div>
-
+    <div>
+        <h2><a href="api/users">+ Add a User</a></h2>
+    </div>
 </body>
 </html>
