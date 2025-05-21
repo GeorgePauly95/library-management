@@ -1,4 +1,5 @@
 from django.db import models
+from datetime import datetime
 
 
 # Create your models here.
@@ -15,26 +16,26 @@ class book(models.Model):
 
 class bookInstance(models.Model):
     isbn = models.ForeignKey(book, on_delete=models.CASCADE)
-    purchaseDate = models.DateTimeField()
+    purchase_date = models.DateTimeField()
 
 
 class user(models.Model):
-    userId = models.TextField(primary_key=True)
-    firstName = models.TextField()
-    lastName = models.TextField()
+    user_id = models.AutoField(primary_key=True)
+    first_name = models.TextField()
+    last_name = models.TextField()
     age = models.IntegerField()
-    createdAt = models.DateTimeField(default=None)
+    created_at = models.DateTimeField(auto_now_add=True)
 
 
 class borrow(models.Model):
     isbn = models.ForeignKey(book, on_delete=models.PROTECT)
-    dueDate = models.DateTimeField()
-    returnedDate = models.DateTimeField()
+    due_date = models.DateTimeField()
+    returned_date = models.DateTimeField()
     fine = models.FloatField()
-    userId = models.ForeignKey(user, on_delete=models.PROTECT)
+    user_id = models.ForeignKey(user, on_delete=models.PROTECT)
 
 
 class login(models.Model):
     username = models.TextField(primary_key=True)
-    userId = models.ForeignKey(user, on_delete=models.CASCADE)
+    user_id = models.ForeignKey(user, on_delete=models.CASCADE)
     password = models.TextField()

@@ -8,12 +8,14 @@
         body {
             background-color: cornflowerblue;
             color: white;
-            font-family: 'Courier New', Courier, monospace
+            font-family: 'Courier New', Courier, monospace;
+            display: inline-block;
         }
         h1 {
             color: white;
             font-family: 'Courier New', Courier, monospace;
-            font-size: 20px
+            font-size: 20px;
+            margin-right: 200px;
         }
         ul {
             list-style-type: none;
@@ -44,10 +46,16 @@
                 background-color: #f9f9f9;
                 width: 150px;
                 box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-                /* z-index: 1; */
+                z-index: 1;
         }
         .dropdown:hover .dropdown-content {
                 display: block;
+        }
+        h2 {
+            margin-top: 0px;
+            padding-top: 0px;
+            margin-left: 200px;
+            display: inline;
         }
     </style>
 
@@ -59,10 +67,13 @@
         <span><b>Browse by Language</b></span>
         <div class="dropdown-content">
             <ul>{% for language in languages %}
-                <li><a href="/library_management/api/books/language/{{language}}">{{language}}</a></li>
-                {% endfor %}
+                <li><a href="{% url 'getByLanguage' language %}">{{language}}</a></li>    
+                {% endfor %}   
             </ul>
         </div>
+    </div>
+    <div>
+        <h2><a href="api/books">+ Add a Book</a></h2>
     </div>
 
 </body>
