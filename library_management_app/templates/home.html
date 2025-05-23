@@ -2,22 +2,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-
+    <title>George's Library</title>
     <style>
         body {
             background-color: cornflowerblue;
             color: white;
             font-family: 'Courier New', Courier, monospace;
-            display: inline-block;
+
         }
         h1 {
             color: white;
             font-family: 'Courier New', Courier, monospace;
             font-size: 20px;
-            margin-right: 200px;
+            display: inline-block;
         }
-        ul {
+        h1 a {
+            color: white;
+            text-decoration: none;
+        }
+        .language-list {
             list-style-type: none;
             margin: 0;
             padding: 0;
@@ -25,20 +28,21 @@
             background-color: #f1f1f1;
             border: 1px solid #555;
             }
-        li a {
+        .language a {
               display: block;
               padding: 8px 16px;
               text-decoration: none;
               text-align: center;
               border-bottom: 1px solid #555;
              }
-        li a:hover {
+        .lanuage a:hover {
                     background-color: #555;
                     color: white;
                     }
         .dropdown {
                     position: relative;
                     display: inline-block;
+                    margin-left: 400px;
         }
         .dropdown-content {
                 display: none;
@@ -55,29 +59,32 @@
             margin-top: 0px;
             padding-top: 0px;
             margin-left: 200px;
-            display: inline;
-            font-size: 12px;
+            display: inline-block;
+            font-size: 16px;
         }
+
     </style>
+    {% block styles %}
+        
+    {% endblock%}
 
 </head>
 <body>
-    {% block heading %}<h1>George's Library</h1>{% endblock %}
-
+    {% block heading %}<h1><a href="http://127.0.0.1:8000/library_management">George's Library</a></h1>{% endblock %}
+    <h2><a href="http://127.0.0.1:8000/library_management/api/books">+ Add a Book</a></h2>
+    <h2><a href="http://127.0.0.1:8000/library_management/api/users">+ Add a User</a></h2>
     <div class="dropdown">
         <span><b>Browse by Language</b></span>
         <div class="dropdown-content">
-            <ul>{% for language in languages %}
-                <li><a href="{% url 'get_by_language' language %}">{{language}}</a></li>    
+            <ul class="language-list">{% for language in languages %}
+                <li class="language"><a href="{% url 'get_by_language' language %}">{{language}}</a></li>    
                 {% endfor %}   
             </ul>
         </div>
     </div>
-    <div>
-        <h2><a href="api/books">+ Add a Book</a></h2>
-    </div>
-    <div>
-        <h2><a href="api/users">+ Add a User</a></h2>
-    </div>
+    {% block content %}
+    
+
+    {% endblock %}
 </body>
 </html>

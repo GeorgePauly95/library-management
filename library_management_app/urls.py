@@ -11,4 +11,5 @@ urlpatterns = [
         name="get_by_language",
     ),
     path("api/users", views.add_user, name="add_user"),
+    path("api/borrow/<int:isbn>", views.borrow_book, name="borrow"),
 ]

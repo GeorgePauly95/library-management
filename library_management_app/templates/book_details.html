@@ -1,0 +1,63 @@
+{% extends 'home.html' %}
+    {% block styles %}
+    <style>
+        .borrow {
+                background-color: purple; 
+                border-radius: 2px;             
+                }
+        .borrow a {
+            text-decoration: none;
+            color: white;
+            font-weight: bold; 
+        }
+
+    </style>
+    {% endblock %}
+
+    {% block content %}
+    <table>
+        <tr>
+            <td>isbn</td>
+            <td>{{ book_details.isbn }}</td>
+        </tr>
+        <tr>
+            <td>title</td>
+            <td>{{ book_details.title }}</td>
+        </tr>
+        <tr>
+            <td>genre</td>
+            <td>{{ book_details.genre}}</td>
+        </tr>
+        <tr>
+            <td>author</td>
+            <td>{{ book_details.author }}</td>
+        </tr>
+        <tr>
+            <td>Summary</td>
+            <td>{{ book_details.summary }}</td>
+        </tr>
+        <tr>
+            <td>Publisher</td>
+            <td>{{ book_details.publisher }}</td>
+        </tr>
+        <tr>
+            <td>Edition</td>
+            <td>{{ book_details.edition }}</td>
+        </tr>
+        <tr>
+            <td>Copies Available</td>
+            <td>{{ copy_count }}</td>
+        </tr>
+        <tr>
+            {% if copy_count > 0 %}
+                <td><button class="borrow "><a href="http://127.0.0.1:8000/library_management/api/borrow/{{book_details.isbn}}">Borrow</a></button></td>
+            {% elif copy_count == 0 and check_date is not None %}
+                <td>{{ book_details.title }} will be available on: {{ check_date }}</td>
+            {% elif copy_count == 0 and check_date is None %}
+                <td> We don't stock {{ book_details.title }} currently</td>
+            {% endif %}
+            <!-- add else block here -->
+
+        </tr>
+    </table>
+    {% endblock %}

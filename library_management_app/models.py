@@ -29,9 +29,9 @@ class user(models.Model):
 
 class borrow(models.Model):
     isbn = models.ForeignKey(book, on_delete=models.PROTECT)
-    due_date = models.DateTimeField()
-    returned_date = models.DateTimeField()
-    fine = models.FloatField()
+    due_date = models.DateField()
+    returned_date = models.DateField(null=True)
+    fine = models.FloatField(null=True)
     user_id = models.ForeignKey(user, on_delete=models.PROTECT)
 
 

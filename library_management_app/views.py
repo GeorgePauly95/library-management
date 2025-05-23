@@ -2,31 +2,55 @@ from django.shortcuts import render
 
 # Create your views here.
 from django.http import HttpResponse
-from .models import book, bookInstance, user
-from datetime import datetime, date
+from .models import book, bookInstance, user, borrow
+from datetime import datetime, date, timedelta
 from .forms import AddUserForm, AddBookForm
 
 
 def home(request):
     books = book.objects.all()
-    genre = [book.genre[0] for book in books]
-    print(genre)
     context = {"languages": set([book.language for book in books])}
     return render(request, "home.html", context)
-
-
-def get_book(request, isbn):
-    selected_book = book.objects.filter(isbn=isbn)
-    print(selected_book)
-    selected_book_data = f"Author:{selected_book[0].author} Title:{selected_book[0].title} \n Summary: {selected_book[0].summary}"
-    return HttpResponse(selected_book_data)
 
 
 def get_by_language(request, language):
     books = book.objects.all()
     books_lang = books.filter(language=language)
-    context = {"books": books_lang}
+    copies = bookInstance.objects.all()
+    context = {"books": books_lang, "languages": set([book.language for book in books])}
     return render(request, "books.html", context)
+
+
+def get_book(request, isbn):
+    books = book.objects.all()
+    selected_book = book.objects.filter(isbn=isbn)
+    book_details = selected_book[0]
+    copies = bookInstance.objects.filter(isbn=book_details.isbn)
+    copies_borrowed = borrow.objects.filter(isbn=book_details.isbn)
+    copies_due_dates = [copy.due_date for copy in copies_borrowed]
+    if copies.count() == 0 and len(copies_due_dates) > 0:
+        context = {
+            "book_details": book_details,
+            "languages": set([book.language for book in books]),
+            "copy_count": copies.count(),
+            "check_date": min(copies_due_dates) + timedelta(days=1),
+        }
+        return render(request, "book_details.html", context)
+    elif copies.count() > 0:
+        context = {
+            "book_details": book_details,
+            "languages": set([book.language for book in books]),
+            "copy_count": copies.count(),
+        }
+        return render(request, "book_details.html", context)
+    else:
+        context = {
+            "book_details": book_details,
+            "languages": set([book.language for book in books]),
+            "copy_count": "Out of Stock!",
+            "check_date": None,
+        }
+        return render(request, "book_details.html", context)
 
 
 def add_book(request):
@@ -82,3 +106,27 @@ def add_user(request):
     else:
         form = AddUserForm()
         return render(request, "add_user.html", {"form": form})
+
+
+def borrow_book(request, isbn):
+    Books = book.objects.all()
+    Book = Books.filter(isbn=isbn)
+    print(Book[0].title)
+    Users = user.objects.all()
+    User_id = Users.filter(user_id=2)
+    bw = borrow(
+        isbn=Book[0], due_date=date.today() + timedelta(days=14), user_id=User_id[0]
+    )
+    bw.save()
+    copies = bookInstance.objects.all()
+    copy = copies.filter(isbn=isbn)
+    copy[0].delete()
+    fine = 10
+
+    context = {
+        "due_date": date.today() + timedelta(days=14),
+        "fine": fine,
+        "book_name": Book[0],
+        "languages": set([book.language for book in Books]),
+    }
+    return render(request, "borrow.html", context)

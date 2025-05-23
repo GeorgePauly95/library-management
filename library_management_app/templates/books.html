@@ -1,18 +1,13 @@
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <ul>
-        {% for book in books %}
+{% extends 'home.html' %}
+
+{% block content %}
+   <ul>
+    {% for book in books %}
         <li>
             <a href="/library_management/api/books/{{book.isbn}}">
-            {{book.title}}
+            {{ book.title }}
             </a>
         </li>
-        {% endfor %}
-    </ul>
-</body>
-</html>
+    {% endfor %}
+    </ul> 
+{% endblock %}
