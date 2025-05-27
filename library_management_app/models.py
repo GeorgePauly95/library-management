@@ -3,10 +3,18 @@ from datetime import datetime
 
 
 # Create your models here.
+class genres(models.Model):
+    genre = models.CharField(null=True)
+
+    def __str__(self):
+        return self.genre
+
+
 class book(models.Model):
     isbn = models.BigIntegerField(13, primary_key=True)
     title = models.TextField()
-    genre = models.TextField()
+    genre = models.ManyToManyField(genres)
+    # genre = models.TextField()
     author = models.TextField()
     summary = models.TextField()
     publisher = models.TextField()

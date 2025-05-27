@@ -20,7 +20,7 @@
             color: white;
             text-decoration: none;
         }
-        .language-list {
+        .list {
             list-style-type: none;
             margin: 0;
             padding: 0;
@@ -28,21 +28,21 @@
             background-color: #f1f1f1;
             border: 1px solid #555;
             }
-        .language a {
+        .list-item a {
               display: block;
               padding: 8px 16px;
               text-decoration: none;
               text-align: center;
               border-bottom: 1px solid #555;
              }
-        .lanuage a:hover {
+        .list-item a:hover {
                     background-color: #555;
                     color: white;
                     }
         .dropdown {
                     position: relative;
                     display: inline-block;
-                    margin-left: 400px;
+                    margin-left: 50px;
         }
         .dropdown-content {
                 display: none;
@@ -58,7 +58,7 @@
         h2 {
             margin-top: 0px;
             padding-top: 0px;
-            margin-left: 200px;
+            margin-left: 50px;
             display: inline-block;
             font-size: 16px;
         }
@@ -72,16 +72,31 @@
 <body>
     {% block heading %}<h1><a href="http://127.0.0.1:8000/library_management">George's Library</a></h1>{% endblock %}
     <h2><a href="http://127.0.0.1:8000/library_management/api/books">+ Add a Book</a></h2>
+    <h2><a href="">+ Return a Book</a></h2>
+    <h2><a href="">+ Delete a Book</a></h2>
+    <h2><a href="">+ Delete a User</a></h2>
+
     <h2><a href="http://127.0.0.1:8000/library_management/api/users">+ Add a User</a></h2>
     <div class="dropdown">
-        <span><b>Browse by Language</b></span>
+        <span><b>>>Browse by Language</b></span>
         <div class="dropdown-content">
-            <ul class="language-list">{% for language in languages %}
-                <li class="language"><a href="{% url 'get_by_language' language %}">{{language}}</a></li>    
+            <ul class="list">{% for language in languages %}
+                <li class="list-item"><a href="{% url 'get_by_language' language %}">{{language}}</a></li>    
                 {% endfor %}   
             </ul>
         </div>
     </div>
+
+    <div class="dropdown">
+        <span><b>>>Browse by Genre</b></span>
+        <div class="dropdown-content">
+            <ul class="list">{% for genre in genres %}
+                <li class="list-item"><a href="{% url 'get_by_genre' genre %}">{{genre}}</a></li>    
+                {% endfor %}   
+            </ul>
+        </div>
+    </div>
+
     {% block content %}
     
 

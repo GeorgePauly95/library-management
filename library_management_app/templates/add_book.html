@@ -1,3 +1,7 @@
+{% extends 'home.html' %}
+
+{% block content %}
+
 <form action="", method="post">
     {% csrf_token %}
     <table>
@@ -62,3 +66,4 @@
     <button type="submit" value="Submit">Submit</button>
 
 </form>
+{% endblock %}

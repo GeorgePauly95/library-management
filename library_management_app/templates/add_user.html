@@ -1,3 +1,7 @@
+{% extends 'home.html' %}
+
+{% block content %}
+
 <form action="", method="post">
     {% csrf_token %}
     <table>
@@ -19,3 +23,4 @@
     <!-- {{ form }} -->
     <button type="submit">Add User</button>
 </form>
+{% endblock %}

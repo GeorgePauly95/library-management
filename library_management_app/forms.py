@@ -1,10 +1,15 @@
 from django import forms
+from .models import genres
 
 
 class AddBookForm(forms.Form):
     isbn = forms.IntegerField(label="isbn")
     title = forms.CharField(label="Title")
-    genre = forms.CharField(label="Genre")
+    # genre = forms.CharField(label="Genre")
+    genre = forms.ModelMultipleChoiceField(
+        queryset=(genres.objects.all()),
+        widget=forms.CheckboxSelectMultiple,
+    )
     author = forms.CharField(label="Author")
     summary = forms.CharField(label="Summary")
     publisher = forms.CharField(label="Publisher")

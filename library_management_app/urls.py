@@ -12,4 +12,9 @@ urlpatterns = [
     ),
     path("api/users", views.add_user, name="add_user"),
     path("api/borrow/<int:isbn>", views.borrow_book, name="borrow"),
+    path(
+        "api/books/genre/<str:genre>",
+        views.get_by_genre,
+        name="get_by_genre",
+    ),
 ]
