@@ -157,18 +157,20 @@ def add_user(request):
 
 def borrow_book(request, isbn):
     Book = books.filter(isbn=isbn)
-    # book_copy_id = bookInstance.objects.filter(isbn=isbn).values("pk")[0]["pk"]
-    book_copy = bookInstance.objects.filter(isbn=isbn)[0]
+    copies = bookInstance.objects.filter(isbn=isbn).values("id")
+    copies_ids = [copy["id"] for copy in copies]
+    borrows = borrow.objects.filter(isbn=9789792269741).values("copy")
+    borrows_ids = [borrow["copy"] for borrow in borrows]
+    copy_available_id = min([copy for copy in copies_ids if copy not in borrows_ids])
+    copy_available = bookInstance.objects.filter(id=copy_available_id)[0]
     User_id = user.objects.filter(user_id=2)
     bw = borrow(
         isbn=Book[0],
         due_date=date.today() + timedelta(days=14),
         user_id=User_id[0],
-        copy=book_copy,
+        copy=copy_available,
     )
     bw.save()
-    # copy = bookInstance.objects.filter(isbn=isbn).filter(id=book_copy_id)
-    # copy[0].delete()
     fine = 10
     context = {
         "due_date": date.today() + timedelta(days=14),
