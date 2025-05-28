@@ -3,7 +3,7 @@ from . import views
 
 urlpatterns = [
     path("", views.home, name="home"),
-    path("api/books", views.add_book, name="add_book"),
+    path("api/books/add", views.add_book, name="add_book"),
     path("api/books/<int:isbn>", views.get_book, name="get_book"),
     path(
         "api/books/language/<str:language>",
@@ -17,4 +17,6 @@ urlpatterns = [
         views.get_by_genre,
         name="get_by_genre",
     ),
+    path("api/books/returns", views.return_books, name="return_books"),
+    path("api/books/returns", views.return_books, name="return_books"),
 ]

@@ -1,0 +1,41 @@
+{% extends 'home.html' %}
+
+{% block styles %}
+    <style>
+
+        table tr td {
+            border: 2px solid white;
+        }
+        button {
+                background-color: purple; 
+                border-radius: 2px;  
+        }
+        button a {
+            text-decoration: none;
+            color: white;
+            font-weight: bold; 
+        }
+
+    </style>
+{% endblock%}
+
+{% block content %}
+<table>
+    <th>
+        <td>isbn</td>
+        <td>title</td>
+        <td>due date</td>
+        <td>fine</td>
+    </th>
+    {% for book in books %}
+    <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ book.0 }}</td>
+        <td>{{ book.2}}</td>
+        <td>{{ book.1}}</td>
+        <td></td>
+        <td> <button><a href="">Return</a></button></td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

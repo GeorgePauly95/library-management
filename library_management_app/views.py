@@ -4,7 +4,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from .models import book, bookInstance, user, borrow, genres
 from datetime import datetime, date, timedelta
-from .forms import AddUserForm, AddBookForm
+from .forms import AddUserForm, AddBookForm, ReturnBook
 
 books = book.objects.all()
 genre_list = genres.objects.all()
@@ -49,22 +49,22 @@ def get_book(request, isbn):
     copies_borrowed = borrow.objects.filter(isbn=book_details.isbn)
     copies_due_dates = [copy.due_date for copy in copies_borrowed]
 
-    if copies.count() == 0 and len(copies_due_dates) > 0:
+    if copies.count() - copies_borrowed.count() == 0 and len(copies_due_dates) > 0:
         context = {
             "book_details": book_details,
             "languages": base_context["languages"],
             "genres": base_context["genres"],
-            "copy_count": copies.count(),
+            "copy_count": copies.count() - copies_borrowed.count(),
             "check_date": min(copies_due_dates) + timedelta(days=1),
             "book_genres": book_genre_list,
         }
         return render(request, "book_details.html", context)
-    elif copies.count() > 0:
+    elif copies.count() - copies_borrowed.count() > 0:
         context = {
             "book_details": book_details,
             "languages": base_context["languages"],
             "genres": base_context["genres"],
-            "copy_count": copies.count(),
+            "copy_count": copies.count() - copies_borrowed.count(),
             "book_genres": book_genre_list,
         }
         return render(request, "book_details.html", context)
@@ -157,13 +157,18 @@ def add_user(request):
 
 def borrow_book(request, isbn):
     Book = books.filter(isbn=isbn)
+    # book_copy_id = bookInstance.objects.filter(isbn=isbn).values("pk")[0]["pk"]
+    book_copy = bookInstance.objects.filter(isbn=isbn)[0]
     User_id = user.objects.filter(user_id=2)
     bw = borrow(
-        isbn=Book[0], due_date=date.today() + timedelta(days=14), user_id=User_id[0]
+        isbn=Book[0],
+        due_date=date.today() + timedelta(days=14),
+        user_id=User_id[0],
+        copy=book_copy,
     )
     bw.save()
-    copy = bookInstance.objects.filter(isbn=isbn)
-    copy[0].delete()
+    # copy = bookInstance.objects.filter(isbn=isbn).filter(id=book_copy_id)
+    # copy[0].delete()
     fine = 10
     context = {
         "due_date": date.today() + timedelta(days=14),
@@ -173,3 +178,36 @@ def borrow_book(request, isbn):
         "genres": base_context["genres"],
     }
     return render(request, "borrow.html", context)
+
+
+def return_books(request):
+    if request.method == "GET":
+        form = ReturnBook()
+        context = {
+            "form": form,
+            "languages": set([book.language for book in books]),
+            "genres": [Genre.genre for Genre in genre_list],
+        }
+        return render(request, "returns.html", context)
+    form = ReturnBook(request.POST)
+
+    if form.is_valid():
+        borrowed_books = borrow.objects.filter(user_id=form.cleaned_data["user_id"])
+        borrowed_books_isbns = borrowed_books.values("isbn_id")
+        date_today = date.today()
+        book_titles = [
+            (
+                borrowed_books[i].isbn_id,
+                borrowed_books[i].due_date,
+                books.filter(isbn=borrowed_books_isbns[i]["isbn_id"]).values("title")[
+                    0
+                ]["title"],
+            )
+            for i in range(0, len(borrowed_books_isbns))
+        ]
+
+        return render(
+            request,
+            "borrowed_books.html",
+            {"books": book_titles, "borrowed_books": borrowed_books},
+        )

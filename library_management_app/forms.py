@@ -22,3 +22,10 @@ class AddUserForm(forms.Form):
     first_name = forms.CharField(label="First Name")
     last_name = forms.CharField(label="Last Name")
     age = forms.IntegerField(label="Age")
+
+
+class ReturnBook(forms.Form):
+    user_id = forms.IntegerField(label="User Id")
+    first_name = forms.CharField(label="First Name")
+    last_name = forms.CharField(label="Last Name")
+    age = forms.IntegerField(label="Age")
