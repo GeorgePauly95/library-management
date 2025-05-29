@@ -46,7 +46,9 @@ def get_book(request, isbn):
     book_genres = book_details.genre.all().values("genre")
     book_genre_list = [book_genres[i]["genre"] for i in range(0, len(book_genres))]
     copies = bookInstance.objects.filter(isbn=book_details.isbn)
-    copies_borrowed = borrow.objects.filter(isbn=book_details.isbn)
+    copies_borrowed = borrow.objects.filter(isbn=book_details.isbn).filter(
+        returned_date=None
+    )
     copies_due_dates = [copy.due_date for copy in copies_borrowed]
 
     if copies.count() - copies_borrowed.count() == 0 and len(copies_due_dates) > 0:
@@ -159,7 +161,8 @@ def borrow_book(request, isbn):
     Book = books.filter(isbn=isbn)
     copies = bookInstance.objects.filter(isbn=isbn).values("id")
     copies_ids = [copy["id"] for copy in copies]
-    borrows = borrow.objects.filter(isbn=9789792269741).values("copy")
+    borrows = borrow.objects.filter(isbn=isbn).values("copy").filter(returned_date=None)
+    # will need to modify this to query objects where returned_date is not null
     borrows_ids = [borrow["copy"] for borrow in borrows]
     copy_available_id = min([copy for copy in copies_ids if copy not in borrows_ids])
     copy_available = bookInstance.objects.filter(id=copy_available_id)[0]
@@ -182,7 +185,7 @@ def borrow_book(request, isbn):
     return render(request, "borrow.html", context)
 
 
-def return_books(request):
+def borrowed_books(request):
     if request.method == "GET":
         form = ReturnBook()
         context = {
@@ -192,18 +195,21 @@ def return_books(request):
         }
         return render(request, "returns.html", context)
     form = ReturnBook(request.POST)
-
     if form.is_valid():
-        borrowed_books = borrow.objects.filter(user_id=form.cleaned_data["user_id"])
+        User_Id = form.cleaned_data["user_id"]
+        borrowed_books = borrow.objects.filter(user_id=User_Id).filter(
+            returned_date=None
+        )
         borrowed_books_isbns = borrowed_books.values("isbn_id")
-        date_today = date.today()
         book_titles = [
             (
                 borrowed_books[i].isbn_id,
                 borrowed_books[i].due_date,
+                borrowed_books[i].copy_id,
                 books.filter(isbn=borrowed_books_isbns[i]["isbn_id"]).values("title")[
                     0
                 ]["title"],
+                borrowed_books[i].returned_date,
             )
             for i in range(0, len(borrowed_books_isbns))
         ]
@@ -213,3 +219,15 @@ def return_books(request):
             "borrowed_books.html",
             {"books": book_titles, "borrowed_books": borrowed_books},
         )
+
+
+def return_book(request, isbn, copy_id):
+    borrowed_book = borrow.objects.filter(isbn=isbn).filter(copy_id=copy_id)[0]
+    borrowed_book.returned_date = date.today()
+    borrowed_book.save()
+
+    return HttpResponse("Testing 123, Testing 1  2  3...")
+
+
+def delete_user(request):
+    return HttpResponse("DELETE!")

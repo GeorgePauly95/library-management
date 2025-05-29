@@ -33,6 +33,7 @@ class user(models.Model):
     last_name = models.TextField()
     age = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
+    deleted_at = models.DateTimeField(null=True)
 
 
 class borrow(models.Model):

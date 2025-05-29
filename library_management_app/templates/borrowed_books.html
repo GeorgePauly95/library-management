@@ -20,21 +20,26 @@
 {% endblock%}
 
 {% block content %}
+<h2>Current Borrows:</h2>
 <table>
     <th>
         <td>isbn</td>
+        <td>copy number</td>
         <td>title</td>
         <td>due date</td>
+        <td>returned date</td>
         <td>fine</td>
     </th>
     {% for book in books %}
     <tr>
         <td>{{ forloop.counter }}</td>
-        <td>{{ book.0 }}</td>
-        <td>{{ book.2}}</td>
+        <td>{{ book.0}}</td>
+        <td>{{ book.2 }}</td>
+        <td>{{ book.3}}</td>
         <td>{{ book.1}}</td>
+        <td>{{book.4}}</td>
         <td></td>
-        <td> <button><a href="">Return</a></button></td>
+        <td> <button><a href="{% url 'return_book' isbn=book.0 copy_id=book.2%}">Return</a></button></td>
     </tr>
     {% endfor %}
 </table>

@@ -17,6 +17,15 @@ urlpatterns = [
         views.get_by_genre,
         name="get_by_genre",
     ),
-    path("api/books/returns", views.return_books, name="return_books"),
-    path("api/books/returns", views.return_books, name="return_books"),
+    path("api/books/returns", views.borrowed_books, name="borrowed_books"),
+    path(
+        "api/books/returns/<int:isbn>/<int:copy_id>/",
+        views.return_book,
+        name="return_book",
+    ),
+    path(
+        "api/users/delete",
+        views.delete_user,
+        name="delete_user",
+    ),
 ]
