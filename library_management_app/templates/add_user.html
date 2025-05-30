@@ -5,6 +5,7 @@
 <form action="", method="post">
     {% csrf_token %}
     <table>
+        
         <tr>
             <td>First Name</td>
             <td>{{form.first_name}}</td>
@@ -20,7 +21,6 @@
             <td>{{form.age}}</td>
         </tr>
     </table>
-    <!-- {{ form }} -->
     <button type="submit">Add User</button>
 </form>
 {% endblock %}

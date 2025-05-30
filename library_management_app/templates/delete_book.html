@@ -1,0 +1,35 @@
+{% extends 'home.html' %}
+
+{% block content %}
+
+<form action="" method="post">
+    {% csrf_token %}
+    <table>
+        <tr>
+            <td>
+                isbn
+            </td>
+            <td>
+                {{ form.isbn }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Copy count to be deleted
+            </td>
+            <td>
+                {{ form.copy_count }}
+
+            </td>
+        </tr>
+        <tr>
+
+            <td>
+                <button type="submit">Delete Book</button>
+            </td>
+
+        </tr>
+    </table>
+</form>
+
+{% endblock %}

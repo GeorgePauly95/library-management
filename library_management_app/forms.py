@@ -29,3 +29,8 @@ class ReturnBook(forms.Form):
     first_name = forms.CharField(label="First Name")
     last_name = forms.CharField(label="Last Name")
     age = forms.IntegerField(label="Age")
+
+
+class DeleteBook(forms.Form):
+    isbn = forms.IntegerField(label="isbn")
+    copy_count = forms.IntegerField(label="Number of copies")

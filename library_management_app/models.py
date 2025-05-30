@@ -1,5 +1,4 @@
 from django.db import models
-from datetime import datetime
 
 
 # Create your models here.
@@ -14,17 +13,18 @@ class book(models.Model):
     isbn = models.BigIntegerField(13, primary_key=True)
     title = models.TextField()
     genre = models.ManyToManyField(genres)
-    # genre = models.TextField()
     author = models.TextField()
     summary = models.TextField()
     publisher = models.TextField()
     language = models.TextField()
     edition = models.TextField()
+    deleted_at = models.DateTimeField(null=True)
 
 
 class bookInstance(models.Model):
     isbn = models.ForeignKey(book, on_delete=models.CASCADE)
     purchase_date = models.DateTimeField()
+    deleted_at = models.DateTimeField(null=True)
 
 
 class user(models.Model):
@@ -37,6 +37,7 @@ class user(models.Model):
 
 
 class borrow(models.Model):
+    # isbn is not required
     isbn = models.ForeignKey(book, on_delete=models.PROTECT)
     copy = models.ForeignKey(bookInstance, on_delete=models.PROTECT)
     due_date = models.DateField()

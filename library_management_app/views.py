@@ -4,7 +4,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from .models import book, bookInstance, user, borrow, genres
 from datetime import datetime, date, timedelta
-from .forms import AddUserForm, AddBookForm, ReturnBook
+from .forms import AddUserForm, AddBookForm, ReturnBook, DeleteBook
 
 books = book.objects.all()
 genre_list = genres.objects.all()
@@ -45,7 +45,7 @@ def get_book(request, isbn):
     book_details = selected_book[0]
     book_genres = book_details.genre.all().values("genre")
     book_genre_list = [book_genres[i]["genre"] for i in range(0, len(book_genres))]
-    copies = bookInstance.objects.filter(isbn=book_details.isbn)
+    copies = bookInstance.objects.filter(isbn=book_details.isbn).filter(deleted_at=None)
     copies_borrowed = borrow.objects.filter(isbn=book_details.isbn).filter(
         returned_date=None
     )
@@ -118,7 +118,6 @@ def add_book(request):
     )
     b.save()
     b.genre.set(Genre)
-    # b.save()
     for i in range(0, Copy_count):
         bI = bookInstance(isbn=b, purchase_date=date.today())
         bI.save()
@@ -158,11 +157,11 @@ def add_user(request):
 
 
 def borrow_book(request, isbn):
+    # multiple requests issue
     Book = books.filter(isbn=isbn)
     copies = bookInstance.objects.filter(isbn=isbn).values("id")
     copies_ids = [copy["id"] for copy in copies]
     borrows = borrow.objects.filter(isbn=isbn).values("copy").filter(returned_date=None)
-    # will need to modify this to query objects where returned_date is not null
     borrows_ids = [borrow["copy"] for borrow in borrows]
     copy_available_id = min([copy for copy in copies_ids if copy not in borrows_ids])
     copy_available = bookInstance.objects.filter(id=copy_available_id)[0]
@@ -197,6 +196,11 @@ def borrowed_books(request):
     form = ReturnBook(request.POST)
     if form.is_valid():
         User_Id = form.cleaned_data["user_id"]
+        if User_Id not in [
+            user["user_id"]
+            for user in user.objects.filter(deleted_at=None).values("user_id")
+        ]:
+            return HttpResponse("This is not a valid User!")
         borrowed_books = borrow.objects.filter(user_id=User_Id).filter(
             returned_date=None
         )
@@ -226,8 +230,58 @@ def return_book(request, isbn, copy_id):
     borrowed_book.returned_date = date.today()
     borrowed_book.save()
 
-    return HttpResponse("Testing 123, Testing 1  2  3...")
+    return HttpResponse("Thank you for returning the book!")
 
 
 def delete_user(request):
-    return HttpResponse("DELETE!")
+    if request.method == "GET":
+        form = ReturnBook()
+        return render(request, "delete_user.html", {"form": form})
+    form = ReturnBook(request.POST)
+    if form.is_valid():
+        User_Id = form.cleaned_data["user_id"]
+        if User_Id not in [
+            user["user_id"]
+            for user in user.objects.filter(deleted_at=None).values("user_id")
+        ]:
+            return HttpResponse("This is not a valid User!")
+        User = user.objects.filter(user_id=User_Id)[0]
+        User.deleted_at = datetime.now()
+        User.save()
+        return HttpResponse("User Has Been Deleted!")
+
+
+def delete_book(request):
+    if request.method == "GET":
+        form = DeleteBook()
+        return render(request, "delete_book.html", {"form": form})
+    form = DeleteBook(request.POST)
+    if form.is_valid():
+        Isbn = form.cleaned_data["isbn"]
+        Copy_count_to_be_deleted = form.cleaned_data["copy_count"]
+        Copy_borrowed = borrow.objects.filter(isbn=Isbn).filter(returned_date=None)
+        Copy_count_borrowed = len(Copy_borrowed)
+        Copy_current = bookInstance.objects.filter(isbn=Isbn).filter(deleted_at=None)
+        Copy_count_current = len(Copy_current)
+        if Copy_count_borrowed != 0:
+            return HttpResponse(
+                "Copies of this book cannot be deleted at the moment since some of them have been borrowed"
+            )
+        elif Copy_count_current == 0:
+            return HttpResponse("We currently do not have any copies of this book!")
+        elif Copy_count_to_be_deleted > Copy_count_current:
+            return HttpResponse(
+                f"There are only {Copy_count_current} copies of this book at the library, not {Copy_count_to_be_deleted}"
+            )
+        elif Copy_count_to_be_deleted < Copy_count_current:
+            for i in range(0, Copy_count_to_be_deleted):
+                Copy_current[i].deleted_at = datetime.now()
+                Copy_current[i].save()
+            return HttpResponse(
+                f"There are now {Copy_count_current-Copy_count_to_be_deleted} copies of this book left"
+            )
+        elif Copy_count_to_be_deleted == Copy_count_current:
+            for i in range(0, Copy_count_current):
+                Copy_current[i].deleted_at = datetime.now()
+                Copy_current[i].save()
+            return HttpResponse(f"All copies of this book have been deleted!")
